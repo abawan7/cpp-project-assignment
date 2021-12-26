@@ -14,6 +14,20 @@ using namespace std;
 #define KEY_RIGHT 77
 #define SPACE 32
 
+void shootAlien(char aliens[][210], int x, int y, int& x1, int& y1, int& x2, int& y2, int& x3, int& y3, int& x4, int& y4, int& x5, int& y5, int key);
+
+int getInput(int key)
+{
+    if (_kbhit())
+    {
+        key = _getch();
+
+        return key;
+    }
+
+    return false;
+};
+
 void setCursorPointer(int x = 0, int y = 0)
 {
     HANDLE handle;
@@ -61,87 +75,128 @@ void buildSpaceShip(int& x1, int& y1, int& x2, int& y2, int& x3, int& y3, int& x
 {
     if (key == 75) {
         setCursorPointer(x1 + 1, y1);
-        cout << "      ";
+        cout << " ";
         setCursorPointer(x2 + 1, y2);
-        cout << "      ";
+        cout << " ";
         setCursorPointer(x3 + 1, y3);
-        cout << "      ";
+        cout << " ";
         setCursorPointer(x4 + 1, y4);
-        cout << "      ";
+        cout << " ";
         setCursorPointer(x5 + 1, y5);
-        cout << "      ";
+        cout << " ";
     }
 
     if (key == 77) {
         setCursorPointer(x1 - 1, y1);
-        cout << "      ";
+        cout << " ";
         setCursorPointer(x2 - 1, y2);
-        cout << "      ";
+        cout << " ";
         setCursorPointer(x3 - 1, y3);
-        cout << "      ";
+        cout << " ";
         setCursorPointer(x4 - 1, y4);
-        cout << "      ";
+        cout << " ";
         setCursorPointer(x5 - 1, y5);
-        cout << "      ";
+        cout << " ";
     }
 
     setCursorPointer(x1, y1);
-    printf("%c", 17);
+    printf("%c", 17);                     //  printf("%c", 17);
     setCursorPointer(x2, y2);
-    printf("     %c", 16);
+    printf("%c", 223);                 //  printf("     %c", 16);
     setCursorPointer(x3, y3);
-    printf("%c%c%c", 30, 223, 30);
+    printf("%c", 16);
     setCursorPointer(x4, y4);
-    printf("  %c   ", 4);
+    printf("%c", 4);                 //  printf("  %c   ", 4);
     setCursorPointer(x5, y5);
-    printf("   %c  ", 30);
+    printf("%c", 30);               //   printf("   %c  ", 30);
 }
 
-void createAliens(char aliens[][15]) {
+void createAliens(char aliens[][210]) {
     int x = 0;
     int y = 0;
 
-    for (int i = 0; i < 20; i++) {
-        x = rand() % 210;
-        y = rand() % 15;
+    for (int i = 0; i < 47; i++) {
+        for (int j = 0; j < 210; j++) {
+            aliens[i][j] = ' ';
+        }
+    }
+
+    for (int i = 0; i < 500; i++) {
+        x = rand() % 209;
+        y = rand() % 14;
 
         setCursorPointer(x, y);
 
-        aliens[x][y] = '+';
-        cout << aliens[x][y];
+        aliens[y][x] = 'X';
+        cout << aliens[y][x];
     }
 }
 
-void shootAlien(char aliens[][15], int x, int y) {
-    /*for (int i = 0; i < 15; i++) {
-        for (int j = 0; j < 210; j++) {
-            if (aliens[i][j] == '+') {
-                setCursorPointer(17, 0);
+void performOperation(char aliens[][210], int& x1, int& y1, int& x2, int& y2, int& x3, int& y3, int& x4, int& y4, int& x5, int& y5, int key, bool isShoot)
+{
+    key = getInput(key);
 
-                cout << i << " " << j;
-            }
+    if (isShoot && key == SPACE) {
+        return;
+    }
+
+    switch (key) {
+    case 75:
+        if (x1 == 0) {
+            break;
         }
-    }*/
 
-    while (aliens[x][y] != '+') {
-        if (x == 0) {
+        x1--;
+        x2--;
+        x3--;
+        x4--;
+        x5--;
+        buildSpaceShip(x1, y1, x2, y2, x3, y3, x4, y4, x5, y5, key);
+
+        break;
+    case KEY_RIGHT:
+        if (x3 == 210) {
+            break;
+        }
+
+        x1++;
+        x2++;
+        x3++;
+        x4++;
+        x5++;
+        buildSpaceShip(x1, y1, x2, y2, x3, y3, x4, y4, x5, y5, key);
+        break;
+    case SPACE:
+        shootAlien(aliens, x5, y5, x1, y1, x2, y2, x3, y3, x4, y4, x5, y5, key);
+    case NULL:
+        break;
+    }
+}
+
+void shootAlien(char aliens[][210], int x, int y, int& x1, int& y1, int& x2, int& y2, int& x3, int& y3, int& x4, int& y4, int& x5, int& y5, int key) {
+    while (aliens[y][x] != 'X') {
+        performOperation(aliens, x1, y1, x2, y2, x3, y3, x4, y4, x5, y5, key, true);
+
+        if (y == 0) {
             break;
         }
 
         y--;
 
         setCursorPointer(x, y);
-        cout << "   ^  ";
+        printf("%c", 30);
 
-        Sleep(200);
+        Sleep(40);
 
         setCursorPointer(x, y);
-        cout << "      ";
+        cout << " ";
     }
+    aliens[y][x] = ' ';
 }
 
 int main()
 {
+    system("Color 70");
     system("mode 650");
 
     drawWindowFrame(0, 1, 210, 50);
@@ -153,45 +208,16 @@ int main()
     srand(time(0));
 
     int key = 0;
-    int x1 = 73, y1 = 48, x2 = 74, y2 = 48, x3 = 75, y3 = 48, x4 = 74, y4 = 47, x5 = 73, y5 = 46;
-    char aliens[210][15];
-
-    buildSpaceShip(x1, y1, x2, y2, x3, y3, x4, y4, x5, y5, 0);
+    int x1 = 73, y1 = 48, x2 = 75, y2 = 48, x3 = 77, y3 = 48, x4 = 75, y4 = 47, x5 = 75, y5 = 46;
+    char aliens[47][210] = { 0 };
 
     createAliens(aliens);
 
+    buildSpaceShip(x1, y1, x2, y2, x3, y3, x4, y4, x5, y5, 0);
+
     while (1)
     {
-        switch ((key = _getch())) {
-        case KEY_LEFT:
-            if (x1 == 0) {
-                break;
-            }
-
-            x1--;
-            x2--;
-            x3--;
-            x4--;
-            x5--;
-            buildSpaceShip(x1, y1, x2, y2, x3, y3, x4, y4, x5, y5, key);
-
-            break;
-        case KEY_RIGHT:
-            if (x3 == 210) {
-                break;
-            }
-
-            x1++;
-            x2++;
-            x3++;
-            x4++;
-            x5++;
-            buildSpaceShip(x1, y1, x2, y2, x3, y3, x4, y4, x5, y5, key);
-            break;
-        case SPACE:
-            shootAlien(aliens, x5, y5);
-        }
-
+        performOperation(aliens, x1, y1, x2, y2, x3, y3, x4, y4, x5, y5, key, false);
     }
     return 0;
 }
