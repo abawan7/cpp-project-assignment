@@ -68,6 +68,15 @@ void drawGameFrame(int a_x, int a_y, int b_x, int b_y)
     setCursorPointer(b_x, b_y); printf("%c", 188);
 }
 
+void gameOverDefeatMessage()
+{ // When you lose the game you see this in screen
+    int a_x = 77;
+    int a_y = 25;
+    int b_x = a_x + 23;
+    int b_y = a_y + 4;
+    setCursorPointer(a_x + 1, a_y + 2); printf("      DEFEAT!!!");
+}
+
 void drawScoreFrame(int a_x, int a_y, int b_x, int b_y)
 { // This will draw a rectangular frame defined by two points
     drawWhiteSpace(a_x, a_y, b_x, b_y);
@@ -155,27 +164,17 @@ void buildSpaceShip(int& x1, int& y1, int& x2, int& y2, int& x3, int& y3, int& x
 
 void createAliens(char aliens[][150]) {
     int x = 0;
-    int y = 0;
+    int y = 2;
 
-    for (int i = 0; i < 47; i++) {
-        for (int j = 0; j < 150; j++) {
-            aliens[i][j] = ' ';
-        }
-    }
-
-    for (int i = 0; i < 300; i++) {
+    for (int i = 0; i < 1; i++) {
         x = rand() % 148;
-        y = rand() % 14;
         x = x + 2;
-        y = y + 2;
 
         setCursorPointer(x, y);
-
         aliens[y][x] = 'X';
+        Sleep(100);
         cout << aliens[y][x];
     }
-
-    aliens[y][x] = ' ';
 }
 
 void performOperation(char aliens[][150], int& x1, int& y1, int& x2, int& y2, int& x3, int& y3, int& x4, int& y4, int& x5, int& y5, int key, bool isShoot, int& score)
@@ -216,6 +215,53 @@ void performOperation(char aliens[][150], int& x1, int& y1, int& x2, int& y2, in
         shootAlien(aliens, x5, y5, x1, y1, x2, y2, x3, y3, x4, y4, x5, y5, key, score);
     case NULL:
         break;
+    }
+}
+
+int moveAliens(char aliens[][150], int& x1, int& y1, int& x2, int& y2, int& x3, int& y3, int& x4, int& y4, int& x5, int& y5, int key, int& score)
+{
+    bool isKilled = false;
+    char tempAliens[47][150] = { 0 };
+
+    while (!isKilled) {
+        for (int i = 0; i < 47; i++) {
+            for (int j = 0; j < 150; j++) {
+                tempAliens[i][j] = aliens[i][j];
+            }
+        }
+
+        for (int i = 2; i < 47; i++) {
+            for (int j = 2; j < 150; j++) {
+                if (tempAliens[i][j] == 'X') {
+                    setCursorPointer(j, i);
+                    aliens[i][j] = ' ';
+                    cout << aliens[i][j];
+
+                    setCursorPointer(j, i + 1);
+                    aliens[i + 1][j] = 'X';
+                    cout << aliens[i + 1][j];
+
+                    if (aliens[46][j] == 'X')
+                    {
+                        isKilled = true;
+                    }
+                }
+            }
+        }
+        if (isKilled != true) {
+
+            performOperation(aliens, x1, y1, x2, y2, x3, y3, x4, y4, x5, y5, key, false, score);
+
+            createAliens(aliens);
+
+            performOperation(aliens, x1, y1, x2, y2, x3, y3, x4, y4, x5, y5, key, false, score);
+        }
+        else {
+            system("cls");
+            gameOverDefeatMessage();
+            _getch();
+            return 0;
+        }
     }
 }
 
@@ -264,13 +310,13 @@ int main()
     int x1 = 73, y1 = 48, x2 = 75, y2 = 48, x3 = 77, y3 = 48, x4 = 75, y4 = 47, x5 = 75, y5 = 46;
     char aliens[47][150] = { 0 };
 
-    createAliens(aliens);
-
     buildSpaceShip(x1, y1, x2, y2, x3, y3, x4, y4, x5, y5, 0);
 
     while (1)
     {
         performOperation(aliens, x1, y1, x2, y2, x3, y3, x4, y4, x5, y5, key, false, score);
+        createAliens(aliens);
+        moveAliens(aliens, x1, y1, x2, y2, x3, y3, x4, y4, x5, y5, key, score);
     }
     return 0;
 }
