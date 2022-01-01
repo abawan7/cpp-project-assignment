@@ -115,13 +115,13 @@ void welcomeMessage()
 {
     int x = 77;
     int y = 20;
-    setCursorPointer(x, y); printf(" _____                    _____ _           _           ");
-    setCursorPointer(x, y + 1); printf("|   __|___ ___ ___ ___   |   __| |_ ___ ___| |_ ___ ___ ");
-    setCursorPointer(x, y + 2); printf("|__   | . | .'|  _| -_|  |__   |   | . | . |  _| -_|  _|");
-    setCursorPointer(x, y + 3); printf("|_____|  _|__,|___|___|  |_____|_|_|___|___|_| |___|_|  ");
-    setCursorPointer(x, y + 4); printf("      |_|");
-    setCursorPointer(x, y + 6); printf("                 Press any key to play");
-    setCursorPointer(x, y + 7); printf("               developed by Abdullah Awan     ");
+    setCursorPointer(x, y); cout << " _____                    _____ _           _           ";
+    setCursorPointer(x, y + 1); cout << "|   __|___ ___ ___ ___   |   __| |_ ___ ___| |_ ___ ___ ";
+    setCursorPointer(x, y + 2); cout << "|__   | . | .'|  _| -_|  |__   |   | . | . |  _| -_|  _|";
+    setCursorPointer(x, y + 3); cout << "|_____|  _|__,|___|___|  |_____|_|_|___|___|_| |___|_|  ";
+    setCursorPointer(x, y + 4); cout << "      |_|";
+    setCursorPointer(x, y + 6); cout << "                 Press any key to play";
+    setCursorPointer(x, y + 7); cout << "Developed By Abdullah Awan, Mudassir Ali, Abdullah Saeed";
 }
 
 
