@@ -7,7 +7,6 @@
 #include <time.h>
 #include <fstream>
 #include <string>
-#include <sstream>
 
 using namespace std;
 
@@ -260,13 +259,15 @@ void readFile(string filename) {
     ifstream file(filename);
 
     if (!file.is_open()) {
+        setCursorPointer(160, 25);
+        cout << "----------------- LAST SCORE -----------------";
         setCursorPointer(160, y);
         cout << "File Not Found";
     }
     else {
         getline(file, line);
         setCursorPointer(160, 25);
-        cout << "------------------- SCORE -------------------";
+        cout << "----------------- LAST SCORE -----------------";
         setCursorPointer(160, y);
         cout << line;
     }
