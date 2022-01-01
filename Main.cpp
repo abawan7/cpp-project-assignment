@@ -110,8 +110,6 @@ void drawGameLimits()
     cout << "SCORE: ";
     setCursorPointer(160, 5);
     cout << "LEVEL: ";
-    setCursorPointer(159, 25);
-    cout << "--------------------Scores--------------------";
 }
 
 void welcomeMessage()
@@ -252,27 +250,32 @@ void moveAliens(char aliens[][150], int& x1, int& y1, int& x2, int& y2, int& x3,
 }
 
 void readFile(string filename) {
-    string line;
+    int y = 28;
+    int i = 0;
+    int minimum_level;
+    int minimum_score;
+    bool flag = false;
+
+    string line = { ' ' };
     ifstream file(filename);
+
     if (!file.is_open()) {
-        setCursorPointer(160, 32);
+        setCursorPointer(160, y);
         cout << "File Not Found";
     }
     else {
-        int minimum_level;
-        int minimum_score;
-        bool flag = false;
-        int y = 28;
-        while (!file.eof()) {
-            getline(file, line);
-            minimum_level = (int)line[6];
-            minimum_score = (int)line[14];
-            setCursorPointer(160, y);
-            cout << "Level " << (char)minimum_level << " Score " << (char)minimum_score;
-            y++;
-        }
-
+        getline(file, line);
+        setCursorPointer(160, 25);
+        cout << "------------------- SCORE -------------------";
+        setCursorPointer(160, y);
+        cout << line;
     }
+}
+
+void writeFile(string filename, int level, int score) {
+    ofstream file("score.txt");
+    file << "Level " << level << " Score " << score << endl;
+    file.close();
 }
 
 void shootAlien(char aliens[][150], int x, int y, int& x1, int& y1, int& x2, int& y2, int& x3, int& y3, int& x4, int& y4, int& x5, int& y5, int key, int& score) {
@@ -355,8 +358,6 @@ int main()
             }
         }
 
-
-
         if (isKilled) {
             system("cls");
             gameOverDefeatMessage();
@@ -364,23 +365,24 @@ int main()
             lives--;
         }
         else {
-            ofstream file("score.txt");
-            file << "Level " << level << " Score " << score << endl;
-            file.close();
+            flag = true;
+            writeFile("score.txt", level, score);
             system("cls");
-            setCursorPointer(98, 22);
             if (level != 5) {
+                setCursorPointer(98, 22);
                 cout << "LEVEL " << level << " COMPLETE!!!";
                 _getch();
                 speed = speed - 2500;
-                level++;
             }
+            else if (level == 5) {
+                setCursorPointer(98, 22);
+                cout << "VICTORY";
+                _getch();
+                break;
+            }
+            level++;
 
         }
     }
-    if (level == 5) {
-        setCursorPointer(98, 22);
-        cout << "VICTORY";
-        _getch();
-    }
+
 }
