@@ -109,6 +109,14 @@ void drawGameLimits()
     cout << "SCORE: ";
     setCursorPointer(160, 5);
     cout << "LEVEL: ";
+    setCursorPointer(160, 25);
+    cout << "----------------- LAST SCORE -----------------";
+    setCursorPointer(155, 46);
+    cout << "Instructions: Every asteroid gives you 10 points, the";
+    setCursorPointer(155, 47);
+    cout << "Level is over when you reach 100 points.(5 Level) ";
+    setCursorPointer(155, 48);
+    cout << "Game Speed Increase After Every Level";
 }
 
 void welcomeMessage()
@@ -259,15 +267,11 @@ void readFile(string filename) {
     ifstream file(filename);
 
     if (!file.is_open()) {
-        setCursorPointer(160, 25);
-        cout << "----------------- LAST SCORE -----------------";
         setCursorPointer(160, y);
         cout << "File Not Found";
     }
     else {
         getline(file, line);
-        setCursorPointer(160, 25);
-        cout << "----------------- LAST SCORE -----------------";
         setCursorPointer(160, y);
         cout << line;
     }
@@ -295,14 +299,14 @@ void shootAlien(char aliens[][150], int x, int y, int& x1, int& y1, int& x2, int
 
         setCursorPointer(x, y);
         cout << " ";
-    }
 
-    if (aliens[y][x] == 'X') {
-        aliens[y][x] = ' ';
-        score++;
+        if (aliens[y][x] == 'X') {
+            aliens[y][x] = ' ';
+            score += 10;
 
-        setCursorPointer(170, 15);
-        cout << score;
+            setCursorPointer(170, 15);
+            cout << score;
+        }
     }
 }
 
@@ -345,7 +349,7 @@ int main()
         setCursorPointer(170, 5);
         cout << level;
 
-        while (!isKilled && score < 2)
+        while (!isKilled && score < 50)
         {
             performOperation(aliens, x1, y1, x2, y2, x3, y3, x4, y4, x5, y5, key, false, score);
             if (interval > speed) {
