@@ -5,6 +5,9 @@
 #include <windows.h>
 #include <cstdlib>
 #include <time.h>
+#include <fstream>
+#include <string>
+#include <sstream>
 
 using namespace std;
 
@@ -25,7 +28,6 @@ int getInput(int key)
 
         return key;
     }
-
     return false;
 }
 
@@ -108,8 +110,8 @@ void drawGameLimits()
     cout << "SCORE: ";
     setCursorPointer(160, 5);
     cout << "LEVEL: ";
-    setCursorPointer(160, 25);
-    cout << "TOP 5 SCORE: ";
+    setCursorPointer(159, 25);
+    cout << "--------------------Scores--------------------";
 }
 
 void welcomeMessage()
@@ -124,6 +126,8 @@ void welcomeMessage()
     setCursorPointer(x, y + 6); printf("                 Press any key to play");
     setCursorPointer(x, y + 7); printf("               developed by Abdullah Awan     ");
 }
+
+
 
 void buildSpaceShip(int& x1, int& y1, int& x2, int& y2, int& x3, int& y3, int& x4, int& y4, int& x5, int& y5, int key)
 {
@@ -247,6 +251,30 @@ void moveAliens(char aliens[][150], int& x1, int& y1, int& x2, int& y2, int& x3,
     createAliens(aliens);
 }
 
+void readFile(string filename) {
+    string line;
+    ifstream file(filename);
+    if (!file.is_open()) {
+        setCursorPointer(160, 32);
+        cout << "File Not Found";
+    }
+    else {
+        int minimum_level;
+        int minimum_score;
+        bool flag = false;
+        int y = 28;
+        while (!file.eof()) {
+            getline(file, line);
+            minimum_level = (int)line[6];
+            minimum_score = (int)line[14];
+            setCursorPointer(160, y);
+            cout << "Level " << (char)minimum_level << " Score " << (char)minimum_score;
+            y++;
+        }
+
+    }
+}
+
 void shootAlien(char aliens[][150], int x, int y, int& x1, int& y1, int& x2, int& y2, int& x3, int& y3, int& x4, int& y4, int& x5, int& y5, int key, int& score) {
     while (aliens[y][x] != 'X') {
         performOperation(aliens, x1, y1, x2, y2, x3, y3, x4, y4, x5, y5, key, true, score);
@@ -274,6 +302,7 @@ void shootAlien(char aliens[][150], int x, int y, int& x1, int& y1, int& x2, int
     }
 }
 
+
 int main()
 {
     system("Color 70");
@@ -290,6 +319,9 @@ int main()
     int lives = 3;
     int interval = 0;
     int Exit = 0;
+    string line;
+    int i = 0;
+    bool flag = true;
 
     while (lives > 0 && level <= 5) {
         system("cls");
@@ -312,15 +344,18 @@ int main()
         while (!isKilled && score < 2)
         {
             performOperation(aliens, x1, y1, x2, y2, x3, y3, x4, y4, x5, y5, key, false, score);
-
             if (interval > speed) {
                 moveAliens(aliens, x1, y1, x2, y2, x3, y3, x4, y4, x5, y5, key, score, isKilled, speed);
                 interval = 0;
             }
-
             interval++;
-
+            if (flag) {
+                readFile("score.txt");
+                flag = false;
+            }
         }
+
+
 
         if (isKilled) {
             system("cls");
@@ -329,18 +364,21 @@ int main()
             lives--;
         }
         else {
-
+            ofstream file("score.txt");
+            file << "Level " << level << " Score " << score << endl;
+            file.close();
             system("cls");
             setCursorPointer(98, 22);
             if (level != 5) {
                 cout << "LEVEL " << level << " COMPLETE!!!";
+                _getch();
+                speed = speed - 2500;
+                level++;
             }
-            _getch();
-            speed = speed - 2000;
-            level++;
+
         }
     }
-    if (lives == 5) {
+    if (level == 5) {
         setCursorPointer(98, 22);
         cout << "VICTORY";
         _getch();
