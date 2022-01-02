@@ -1,15 +1,3 @@
-/*Project Assignment By :
-Abdullah Awan (21L-7713)
-l217713@lhr.nu.edu.pk
-
-Abdullah Saeed (21L-7601)
-l217601@lhr.nu.edu.pk
-
-Mudassir Ali (21L-5474)
-l215474@lhr.nu.edu.pk
-
-Section: CS 1J
-*/
 #include <conio.h>
 #include<stdio.h>
 #include <iostream>
