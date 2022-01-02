@@ -17,8 +17,6 @@ using namespace std;
 #define SPACE 32
 #define ESC 27
 
-void shootAlien(char aliens[][150], int x, int y, int& x1, int& y1, int& x2, int& y2, int& x3, int& y3, int& x4, int& y4, int& x5, int& y5, int key, int& score);
-
 int getInput(int key)
 {
     if (_kbhit())
@@ -174,6 +172,33 @@ void buildSpaceShip(int& x1, int& y1, int& x2, int& y2, int& x3, int& y3, int& x
     printf("%c", 30);
 }
 
+void readFile(string filename) {
+    int y = 28;
+    int i = 0;
+    int minimum_level;
+    int minimum_score;
+    bool flag = false;
+
+    string line = { ' ' };
+    ifstream file(filename);
+
+    if (!file.is_open()) {
+        setCursorPointer(160, y);
+        cout << "File Not Found";
+    }
+    else {
+        getline(file, line);
+        setCursorPointer(160, y);
+        cout << line;
+    }
+}
+
+void writeFile(string filename, int level, int score) {
+    ofstream file("score.txt");
+    file << "Level " << level << " Score " << score << endl;
+    file.close();
+}
+
 void createAliens(char aliens[][150]) {
     int x = rand() % 148;
     x = x + 2;
@@ -183,7 +208,7 @@ void createAliens(char aliens[][150]) {
     cout << aliens[2][x];
 }
 
-void performOperation(char aliens[][150], int& x1, int& y1, int& x2, int& y2, int& x3, int& y3, int& x4, int& y4, int& x5, int& y5, int key, bool isShoot, int& score)
+void performOperation(char aliens[][150], int& bx, int& x1, int& y1, int& x2, int& y2, int& x3, int& y3, int& x4, int& y4, int& x5, int& y5, int key, bool& isShoot, int& score)
 {
     key = getInput(key);
 
@@ -218,13 +243,14 @@ void performOperation(char aliens[][150], int& x1, int& y1, int& x2, int& y2, in
         buildSpaceShip(x1, y1, x2, y2, x3, y3, x4, y4, x5, y5, key);
         break;
     case SPACE:
-        shootAlien(aliens, x5, y5, x1, y1, x2, y2, x3, y3, x4, y4, x5, y5, key, score);
+        bx = x5;
+        isShoot = true;
     case NULL:
         break;
     }
 }
 
-void moveAliens(char aliens[][150], int& x1, int& y1, int& x2, int& y2, int& x3, int& y3, int& x4, int& y4, int& x5, int& y5, int key, int& score, bool& isKilled, int& speed)
+void moveAliens(char aliens[][150], int key, int& score, bool& isKilled, int& speed)
 {
     char tempAliens[47][150] = { 0 };
 
@@ -256,57 +282,36 @@ void moveAliens(char aliens[][150], int& x1, int& y1, int& x2, int& y2, int& x3,
     createAliens(aliens);
 }
 
-void readFile(string filename) {
-    int y = 28;
-    int i = 0;
-    int minimum_level;
-    int minimum_score;
-    bool flag = false;
-
-    string line = { ' ' };
-    ifstream file(filename);
-
-    if (!file.is_open()) {
-        setCursorPointer(160, y);
-        cout << "File Not Found";
-    }
-    else {
-        getline(file, line);
-        setCursorPointer(160, y);
-        cout << line;
-    }
-}
-
-void writeFile(string filename, int level, int score) {
-    ofstream file("score.txt");
-    file << "Level " << level << " Score " << score << endl;
-    file.close();
-}
-
-void shootAlien(char aliens[][150], int x, int y, int& x1, int& y1, int& x2, int& y2, int& x3, int& y3, int& x4, int& y4, int& x5, int& y5, int key, int& score) {
-    while (aliens[y][x] != 'X') {
-        performOperation(aliens, x1, y1, x2, y2, x3, y3, x4, y4, x5, y5, key, true, score);
-        if (y == 2) {
-            break;
-        }
-
-        y--;
-
+void shootAlien(char aliens[][150], int& x, int& y, int& score, bool& isShoot) {
+    if (y == 2) {
         setCursorPointer(x, y);
-        printf("%c", 30);
+        cout << " ";
 
-        Sleep(40);
+        isShoot = false;
+        y = 44;
+
+        return;
+    }
+
+    y--;
+
+    setCursorPointer(x, y + 1);
+    cout << " ";
+    setCursorPointer(x, y);
+    printf("%c", 30);
+
+    if (aliens[y][x] == 'X') {
+        aliens[y][x] = ' ';
+        score += 10;
+
+        setCursorPointer(170, 15);
+        cout << score;
 
         setCursorPointer(x, y);
         cout << " ";
 
-        if (aliens[y][x] == 'X') {
-            aliens[y][x] = ' ';
-            score += 10;
-
-            setCursorPointer(170, 15);
-            cout << score;
-        }
+        y = 44;
+        isShoot = false;
     }
 }
 
@@ -330,13 +335,16 @@ int main()
     string line;
     int i = 0;
     bool flag = true;
+    bool isShoot = false;
+    int bulltetSpeed = 1000;
+    int bulletInterval = 0;
 
     while (lives > 0 && level <= 5) {
         system("cls");
         drawGameLimits();
 
         int key = 0, score = 0;
-        int x1 = 73, y1 = 48, x2 = 75, y2 = 48, x3 = 77, y3 = 48, x4 = 75, y4 = 47, x5 = 75, y5 = 46;
+        int x1 = 73, y1 = 48, x2 = 75, y2 = 48, x3 = 77, y3 = 48, x4 = 75, y4 = 47, x5 = 75, y5 = 46, bx = 75, by = 44;
         char aliens[47][150] = { 0 };
         bool isKilled = false;
 
@@ -351,12 +359,23 @@ int main()
 
         while (!isKilled && score < 50)
         {
-            performOperation(aliens, x1, y1, x2, y2, x3, y3, x4, y4, x5, y5, key, false, score);
+            performOperation(aliens, bx, x1, y1, x2, y2, x3, y3, x4, y4, x5, y5, key, isShoot, score);
+
+            if (isShoot && bulletInterval > bulltetSpeed)
+            {
+                shootAlien(aliens, bx, by, score, isShoot);
+                bulletInterval = 0;
+            }
+
+            bulletInterval++;
+
             if (interval > speed) {
-                moveAliens(aliens, x1, y1, x2, y2, x3, y3, x4, y4, x5, y5, key, score, isKilled, speed);
+                moveAliens(aliens, key, score, isKilled, speed);
                 interval = 0;
             }
+
             interval++;
+
             if (flag) {
                 readFile("score.txt");
                 flag = false;
@@ -389,5 +408,4 @@ int main()
 
         }
     }
-
 }
