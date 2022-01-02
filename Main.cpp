@@ -129,7 +129,7 @@ void welcomeMessage()
     setCursorPointer(x, y + 3); cout << "|_____|  _|__,|___|___|  |_____|_|_|___|___|_| |___|_|  ";
     setCursorPointer(x, y + 4); cout << "      |_|";
     setCursorPointer(x, y + 6); cout << "                 Press any key to play";
-    setCursorPointer(x, y + 7); cout << "Developed By Abdullah Awan, Mudassir Ali, Abdullah Saeed";
+    setCursorPointer(x, y + 7); cout << "               Developed By Abdullah Awan";
 }
 
 
