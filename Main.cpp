@@ -1,3 +1,15 @@
+/*Project Assignment By :
+Abdullah Awan (21L-7713)
+l217713@lhr.nu.edu.pk
+
+Abdullah Saeed (21L-7601)
+l217601@lhr.nu.edu.pk
+
+Mudassir Ali (21L-5474)
+l215474@lhr.nu.edu.pk
+
+Section: CS 1J
+*/
 #include <conio.h>
 #include<stdio.h>
 #include <iostream>
@@ -114,7 +126,7 @@ void drawGameLimits()
     setCursorPointer(155, 46);
     cout << "Instructions: Every asteroid gives you 10 points, the";
     setCursorPointer(155, 47);
-    cout << "Level is over when you reach 100 points.(5 Level) ";
+    cout << "Level is over when you reach 50 points.(5 Level) ";
     setCursorPointer(155, 48);
     cout << "Game Speed Increase After Every Level";
 }
